@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+// تعريف هيكل العنصر
+typedef struct element {
+    int val;
+    struct element* suivant;
+} element;
+// إنشاء قائمة جديدة فارغة
+element* creerListe() {
+    return NULL;
+}
+// شحن القائمة من مصفوفة
+element* chargerListe(int Tab[], int taille, element* liste) {
+    for (int i = 0; i < taille; i++) {
+        element* nouveau = (element*)malloc(sizeof(element));
+        nouveau->val = Tab[i];
+        nouveau->suivant = liste;
+        liste = nouveau;
+    }
+    return liste;
+}
+// عرض محتويات القائمة
+void afficherListe(element* L) {
+    element* courant = L;
+    while (courant != NULL) {
+        printf("%d -> ", courant->val);
+        courant = courant->suivant;
+    }
+    printf("NULL\n");
+}
+// حذف العنصر الأخير في القائمة
+element* supprimerEnFin(element* L) {
+    if (L == NULL) return NULL;
+    if (L->suivant == NULL) {
+        free(L);
+        return NULL;
+    }
+    element* courant = L;
+    while (courant->suivant->suivant != NULL) {
+        courant = courant->suivant;
+    }
+    free(courant->suivant);
+    courant->suivant = NULL;
+    return L;
+}
+// إضافة عنصر جديد في بداية القائمة
+element* ajouterEnDebut(element* L, int valeur) {
+    element* nouveau = (element*)malloc(sizeof(element));
+    nouveau->val = valeur;
+    nouveau->suivant = L;
+    return nouveau;
+}
+// إفراغ القائمة
+void viderListe(element* L) {
+    element* courant = L;
+    while (courant != NULL) {
+        element* temp = courant;
+        courant = courant->suivant;
+        free(temp);
+    }
+    printf("La liste est vide.\n");
+}
+// البرنامج الرئيسي
+int main() {
+    int Tab[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}; // مصفوفة الإدخال
+    // إنشاء قائمة جديدة وشحنها
+    element* liste = creerListe();
+    liste = chargerListe(Tab, 10, liste);
+    // عرض القائمة الأولية
+    printf("Liste initiale:\n");
+    afficherListe(liste);
+    // حذف العنصر الأخير
+    liste = supprimerEnFin(liste);
+    printf("Liste après suppression de l'élément final:\n");
+    afficherListe(liste);
+    // إضافة عنصر في بداية القائمة
+    liste = ajouterEnDebut(liste, 40);
+    printf("Liste après ajout au début:\n");
+    afficherListe(liste);
+    // إفراغ القائمة
+    viderListe(liste);
+    return 0;
+}
