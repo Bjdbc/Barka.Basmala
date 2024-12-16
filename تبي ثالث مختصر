@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// تعريف هيكل العقدة (Node)
+typedef struct Node {
+    int value;               // القيمة المخزنة في العقدة
+    struct Node* next;       // مؤشر يشير إلى العقدة التالية
+} Node;
+
+// إنشاء قائمة جديدة فارغة
+Node* createEmptyList() {
+    return NULL;             // قائمة فارغة (NULL)
+}
+
+// شحن القائمة من مصفوفة
+Node* loadListFromArray(int array[], int size, Node* list) {
+    for (int i = 0; i < size; i++) {
+        Node* newNode = (Node*)malloc(sizeof(Node)); // تخصيص ذاكرة لعقدة جديدة
+        if (newNode == NULL) { // التحقق من نجاح التخصيص
+            printf("فشل في تخصيص الذاكرة.\n");
+            return list;
+        }
+        newNode->value = array[i];   // تخزين القيمة
+        newNode->next = list;        // العقدة الجديدة تشير إلى القائمة الحالية
+        list = newNode;              // تحديث رأس القائمة
+    }
+    return list;
+}
+
+// عرض محتويات القائمة
+void displayList(Node* list) {
+    if (list == NULL) {
+        printf("القائمة فارغة.\n");
+        return;
+    }
+    Node* current = list;            //مؤشر التنقل ة
+    while (current != NULL) {
+        printf("%d -> ", current->value); // طباعة قيمة العقدة الحالية
+        current = current->next;         // الانتقال إلى العقدة التالية
+    }
+    printf("NULL\n");                    // طباعة نهاية القائمة
+}
+
+// حذف العنصر الأخير في القائمة
+Node* deleteLast(Node* list) {
+    if (list == NULL) {           // إذا كانت القائمة فارغة
+        printf("القائمة فارغة، لا يمكن الحذف.\n");
+        return NULL;
+    }
+    if (list->next == NULL) {     // إذا كانت تحتوي على عنصر واحد فقط
+        free(list);               // تحرير الذاكرة المخصصة
+        return NULL;              // القائمة تصبح فارغة
+    }
+    Node* current = list;         // مؤشر للتنقل عبر القائمة
+    while (current->next->next != NULL) { // الوصول إلى ما قبل العقدة الأخيرة
+        current = current->next;
+    }
+    free(current->next);          // تحرير العقدة الأخيرة
+    current->next = NULL;         // تحديث العقدة قبل الأخيرة لتصبح النهاية
+    return list;
+}
+
+// إضافة عنصر جديد في بداية القائمة
+Node* addAtBeginning(Node* list, int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node)); // تخصيص ذاكرة لعقدة جديدة
+    if (newNode == NULL) { // التحقق من نجاح التخصيص
+        printf("فشل في تخصيص الذاكرة.\n");
+        return list;
+    }
+    newNode->value = value;       // تخزين القيمة
+    newNode->next = list;         // العقدة الجديدة تشير إلى القائمة الحالية
+    return newNode;               // إرجاع رأس القائمة الجديد
+}
+
+// إفراغ القائمة بالكامل
+void emptyList(Node* list) {
+    Node* current = list;         // مؤشر للتنقل عبر القائمة
+    while (current != NULL) {
+        Node* temp = current;     // حفظ العقدة الحالية مؤقتًا
+        current = current->next;  // الانتقال إلى العقدة التالية
+        free(temp);               // تحرير العقدة الحالية
+    }
+    printf("تم تفريغ القائمة.\n");
+}
+
+// البرنامج الرئيسي
+int main() {
+    int array[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}; // مصفوفة الإدخال
+
+    // إنشاء قائمة جديدة وشحنها
+    Node* list = createEmptyList();
+    list = loadListFromArray(array, 10, list);
+
+    // عرض القائمة الأولية
+    printf("القائمة الأولية:\n");
+    displayList(list);
+
+    // حذف العنصر الأخير
+    list = deleteLast(list);
+    printf("القائمة بعد حذف العنصر الأخير:\n");
+    displayList(list);
+
+    // إضافة عنصر في بداية القائمة
+    list = addAtBeginning(list, 40);
+    printf("القائمة بعد إضافة عنصر في البداية:\n");
+    displayList(list);
+
+    // إفراغ القائمة بالكامل
+    emptyList(list);
+    return 0; // إنهاء البرنامج
+}
